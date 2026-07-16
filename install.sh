@@ -6,14 +6,22 @@ REPO_URL="https://github.com/hishadow1/vpsdeploybot.git"
 
 # 1. System Packages & Repository Setup
 echo "[*] Installing core dependencies..."
-apt-get update -y && apt-get install -y git python3 python3-pip python3-venv
+apt-get update -y && apt-get install -y git python3 python3-pip python3-venv docker.io
 
 echo "[*] Cloning codebase..."
 rm -rf "$INSTALL_DIR"
 git clone "$REPO_URL" "$INSTALL_DIR"
+
+# FIX: Change directory to the repository path so Docker can see your Dockerfile
 cd "$INSTALL_DIR"
 
-# 2. Virtual Environment & Requirements
+# 2. Build Your Repository's Dockerfile
+echo "[*] Starting Docker build from repository context..."
+systemctl enable --now docker
+docker build -t ubuntu-22.04-with-tmate .
+echo "[✓] Docker image ubuntu-22.04-with-tmate built successfully."
+
+# 3. Virtual Environment & Requirements
 echo "[*] Configuring Python virtual environment..."
 python3 -m venv venv
 ./venv/bin/pip install --upgrade pip
@@ -21,7 +29,7 @@ if [ -f "requirements.txt" ]; then
     ./venv/bin/pip install -r requirements.txt
 fi
 
-# 3. Secure Token Prompt & Configuration Replacement
+# 4. Secure Token Prompt & Configuration Replacement
 token=""
 while [ -z "$token" ]; do
     read -r -p "Enter Discord Bot Token: " token < /dev/tty
@@ -30,7 +38,7 @@ sed -i 's|TOKEN = ""|TOKEN = "'"$token"'"|g' bot.py
 sed -i 's|TOKEN = '\'\''|TOKEN = "'"$token"'"|g' bot.py
 echo "[✓] Token successfully configured in bot.py"
 
-# 4. Runtime Mode Selector Switch
+# 5. Runtime Mode Selector Switch
 echo ""
 echo "How do you want to launch the bot?"
 echo "1) Systemd Service (Runs continuously in background)"
@@ -42,7 +50,8 @@ if [ "$mode" == "1" ]; then
     cat << EOF > /etc/systemd/system/vpsdeploybot.service
 [Unit]
 Description=VPS Deploy Bot Service
-After=network.target
+After=network.target docker.service
+Wants=docker.service
 
 [Service]
 Type=simple
@@ -50,6 +59,7 @@ User=root
 WorkingDirectory=$INSTALL_DIR
 ExecStart=$INSTALL_DIR/venv/bin/python3 $INSTALL_DIR/bot.py
 Restart=always
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
