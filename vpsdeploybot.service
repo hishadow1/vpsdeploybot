@@ -1,0 +1,16 @@
+[Unit]
+Description=VPS Deploy Bot Service
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/vpsdeploybot
+ExecStart=/opt/vpsdeploybot/venv/bin/python3 /opt/vpsdeploybot/bot.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
