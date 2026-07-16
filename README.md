@@ -19,3 +19,6 @@ python3 bot.py
 **add token!**
 
 *you are done*
+
+automatic 
+bash <(curl -fsSL https://raw.githubusercontent.com/hishadow1/vpsdeploybot/main/install.sh)
