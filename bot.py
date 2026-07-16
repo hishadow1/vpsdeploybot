@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 
 # ---------------- CONFIG ----------------
 TOKEN = ""
-GUILD_ID = 1432390408184529084
-MAIN_ADMIN_IDS = {1397506807089598474}  # CHANGED: Renamed to MAIN_ADMIN_IDS
+GUILD_ID = 1405553943899144273
+MAIN_ADMIN_IDS = {1003134870308012052}  # CHANGED: Renamed to MAIN_ADMIN_IDS
 SERVER_IP = "138.68.79.95"
 QR_IMAGE = "https://raw.githubusercontent.com/deadlauncherg/PUFFER-PANEL-IN-FIREBASE/main/qr.jpg"
 IMAGE = "jrei/systemd-ubuntu:22.04"
@@ -31,7 +31,7 @@ POINTS_RENEW_30 = 5
 VPS_LIFETIME_DAYS = 15
 RENEW_MODE_FILE = os.path.join(DATA_DIR, "renew_mode.json")
 LOG_CHANNEL_ID = None
-OWNER_ID = 1397506807089598474
+OWNER_ID = 1003134870308012052
 
 # Global admin sets
 ADMIN_IDS = set(MAIN_ADMIN_IDS)  # This will contain ALL admins (main + additional)
